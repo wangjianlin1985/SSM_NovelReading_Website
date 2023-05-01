@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xnnovel.xy.dao.NovelMapper">
+  <resultMap id="BaseResultMap" type="com.xnnovel.xy.vo.NovelVo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="source" jdbcType="VARCHAR" property="source" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="cover_url" jdbcType="VARCHAR" property="coverUrl" />
+    <result column="type_id" jdbcType="INTEGER" property="typeId" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="favors" jdbcType="INTEGER" property="favors" />
+    <result column="total_words" jdbcType="INTEGER" property="totalWords" />
+    <result column="clicks" jdbcType="INTEGER" property="clicks" />
+    <result column="recommends" jdbcType="INTEGER" property="recommends" />
+    <result column="latest" jdbcType="INTEGER" property="latest" />
+    <result column="latest_spider" jdbcType="INTEGER" property="latestSpider" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <result column="is_completed" jdbcType="INTEGER" property="isCompleted" />
+    <association property="type" select="com.xnnovel.xy.dao.TypeMapper.selectByPrimaryKey" column="type_id"
+                 javaType="com.xnnovel.xy.entity.Type"></association>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.xnnovel.xy.vo.NovelVo">
+    <result column="summary" jdbcType="LONGVARCHAR" property="summary" />
+    <result column="summary_text" jdbcType="LONGVARCHAR" property="summaryText" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, source, title, cover_url, type_id, author, status, favors, total_words, clicks, 
+    recommends, latest, latest_spider, date_format(create_time, '%Y-%c-%d %H:%i:%s' ) as createTime, date_format(modify_time, '%Y-%c-%d %H:%i:%s' ) as modifyTime, is_completed
+  </sql>
+  <sql id="Blob_Column_List">
+    summary,summary_text
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from xn_novel
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from xn_novel
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.xnnovel.xy.entity.Novel">
+    insert into xn_novel (id, source, title, 
+      cover_url, type_id, author, 
+      status, favors, total_words, 
+      clicks, recommends, latest,latest_spider,
+      create_time, modify_time, is_completed, 
+      summary,summary_text)
+    values (#{id,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR},
+      #{coverUrl,jdbcType=VARCHAR}, #{typeId,jdbcType=INTEGER}, #{author,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{favors,jdbcType=INTEGER}, #{totalWords,jdbcType=INTEGER}, 
+      #{clicks,jdbcType=INTEGER}, #{recommends,jdbcType=INTEGER}, #{latest,jdbcType=INTEGER}, #{latestSpider,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, #{isCompleted,jdbcType=INTEGER}, 
+      #{summary,jdbcType=LONGVARCHAR},#{summaryText,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xnnovel.xy.entity.Novel">
+    insert into xn_novel
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="source != null">
+        source,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="coverUrl != null">
+        cover_url,
+      </if>
+      <if test="typeId != null">
+        type_id,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="favors != null">
+        favors,
+      </if>
+      <if test="totalWords != null">
+        total_words,
+      </if>
+      <if test="clicks != null">
+        clicks,
+      </if>
+      <if test="recommends != null">
+        recommends,
+      </if>
+      <if test="latest != null">
+        latest,
+      </if>
+      <if test="latestSpider != null">
+        latest_spider,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+      <if test="isCompleted != null">
+        is_completed,
+      </if>
+      <if test="summary != null">
+        summary,
+      </if>
+      <if test="summaryText != null">
+        summary_text,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null">
+        #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="coverUrl != null">
+        #{coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null">
+        #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="favors != null">
+        #{favors,jdbcType=INTEGER},
+      </if>
+      <if test="totalWords != null">
+        #{totalWords,jdbcType=INTEGER},
+      </if>
+      <if test="clicks != null">
+        #{clicks,jdbcType=INTEGER},
+      </if>
+      <if test="recommends != null">
+        #{recommends,jdbcType=INTEGER},
+      </if>
+      <if test="latest != null">
+        #{latest,jdbcType=INTEGER},
+      </if>
+      <if test="latestSpider != null">
+        #{latestSpider,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isCompleted != null">
+        #{isCompleted,jdbcType=INTEGER},
+      </if>
+      <if test="summary != null">
+        #{summary,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="summaryText != null">
+        #{summaryText,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xnnovel.xy.entity.Novel">
+    update xn_novel
+    <set>
+      <if test="source != null">
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="coverUrl != null">
+        cover_url = #{coverUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="typeId != null">
+        type_id = #{typeId,jdbcType=INTEGER},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="favors != null">
+        favors = #{favors,jdbcType=INTEGER},
+      </if>
+      <if test="totalWords != null">
+        total_words = #{totalWords,jdbcType=INTEGER},
+      </if>
+      <if test="clicks != null">
+        clicks = #{clicks,jdbcType=INTEGER},
+      </if>
+      <if test="recommends != null">
+        recommends = #{recommends,jdbcType=INTEGER},
+      </if>
+      <if test="latest != null">
+        latest = #{latest,jdbcType=INTEGER},
+      </if>
+      <if test="latestSpider != null">
+        latest_spider = #{latestSpider,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isCompleted != null">
+        is_completed = #{isCompleted,jdbcType=INTEGER},
+      </if>
+      <if test="summary != null">
+        summary = #{summary,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="summaryText != null">
+        summary_text = #{summaryText,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xnnovel.xy.entity.Novel">
+    update xn_novel
+    set source = #{source,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      cover_url = #{coverUrl,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      author = #{author,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      favors = #{favors,jdbcType=INTEGER},
+      total_words = #{totalWords,jdbcType=INTEGER},
+      clicks = #{clicks,jdbcType=INTEGER},
+      recommends = #{recommends,jdbcType=INTEGER},
+      latest = #{latest,jdbcType=INTEGER},
+      latest_spider = #{latestSpider,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      is_completed = #{isCompleted,jdbcType=INTEGER},
+      summary = #{summary,jdbcType=LONGVARCHAR},
+      summary_text = #{summaryText,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xnnovel.xy.entity.Novel">
+    update xn_novel
+    set source = #{source,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      cover_url = #{coverUrl,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=INTEGER},
+      author = #{author,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      favors = #{favors,jdbcType=INTEGER},
+      total_words = #{totalWords,jdbcType=INTEGER},
+      clicks = #{clicks,jdbcType=INTEGER},
+      recommends = #{recommends,jdbcType=INTEGER},
+      latest = #{latest,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      is_completed = #{isCompleted,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+
+
+  <delete id="banchDelete">
+    delete from xn_novel where id in
+    <foreach collection="array"  item="item" open="(" separator="," close=")"  >
+      #{item}
+    </foreach>
+  </delete>
+
+
+  <select id="queryList" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
+    from xn_novel
+    <where>
+      <if test='typeId != 0 and typeId != null'>
+        and type_id=#{typeId}
+      </if>
+      <if test='status != 0 and status != null'>
+        and status=#{status}
+      </if>
+      <if test='isCompleted != 0 and isCompleted != null'>
+        and is_completed=#{isCompleted}
+      </if>
+      <if test='title != null and title != ""'>
+        and title like concat('%',#{title},'%')
+      </if>
+    </where>
+    order by create_time desc
+    <if test="start != null and limit != null">
+      limit #{start}, #{limit}
+    </if>
+  </select>
+
+
+  <select id="queryTotal" resultType="java.lang.Integer">
+
+    select count(*) from xn_novel
+    <where>
+      <if test='typeId != 0 and typeId != null'>
+        and type_id=#{typeId}
+      </if>
+      <if test='status != 0 and status != null'>
+        and status=#{status}
+      </if>
+      <if test='isCompleted != 0 and isCompleted != null'>
+        and is_completed=#{isCompleted}
+      </if>
+      <if test='title != null and title != ""'>
+        and title like concat('%',#{title},'%')
+      </if>
+    </where>
+  </select>
+
+
+  <!-- 点击排行 -->
+  <select id="queryOrderByClick" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
+    from xn_novel
+    <where>
+      <if test='typeId != 0 and typeId != null'>
+        and type_id=#{typeId}
+      </if>
+      <if test='status != 0 and status != null'>
+        and status=#{status}
+      </if>
+      <if test='isCompleted != 0 and isCompleted != null'>
+        and is_completed=#{isCompleted}
+      </if>
+      <if test='title != null and title != ""'>
+        and title like concat('%',#{title},'%')
+      </if>
+    </where>
+    order by clicks desc
+    <if test="start != null and limit != null">
+      limit #{start}, #{limit}
+    </if>
+  </select>
+
+  <!-- 推荐排行 -->
+  <select id="queryOrderByRecoms" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
+    from xn_novel
+    <where>
+      <if test='typeId != 0 and typeId != null'>
+        and type_id=#{typeId}
+      </if>
+      <if test='status != 0 and status != null'>
+        and status=#{status}
+      </if>
+      <if test='isCompleted != 0 and isCompleted != null'>
+        and is_completed=#{isCompleted}
+      </if>
+      <if test='title != null and title != ""'>
+        and title like concat('%',#{title},'%')
+      </if>
+    </where>
+    order by clicks desc
+    <if test="start != null and limit != null">
+      limit #{start}, #{limit}
+    </if>
+  </select>
+
+
+  <select id="queryOrderByFavors" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List"/>
+    ,
+    <include refid="Blob_Column_List"/>
+    from xn_novel
+    <where>
+      <if test='typeId != 0 and typeId != null'>
+        and type_id=#{typeId}
+      </if>
+      <if test='status != 0 and status != null'>
+        and status=#{status}
+      </if>
+      <if test='isCompleted != 0 and isCompleted != null'>
+        and is_completed=#{isCompleted}
+      </if>
+      <if test='title != null and title != ""'>
+        and title like concat('%',#{title},'%')
+      </if>
+    </where>
+    order by favors desc
+    <if test="start != null and limit != null">
+      limit #{start}, #{limit}
+    </if>
+  </select>
+
+</mapper>

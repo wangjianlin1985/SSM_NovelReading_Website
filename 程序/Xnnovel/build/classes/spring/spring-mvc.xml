@@ -1,0 +1,135 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+
+    <!-- 2.静态资源默认servlet配置
+        (1)加入对静态资源的处理：js,gif,png
+        (2)允许使用"/"做整体映射
+     -->
+    <mvc:default-servlet-handler/>
+
+    <!-- 配置SpringMVC -->
+    <!-- 1.开启SpringMVC注解模式 -->
+    <!-- 简化配置：
+        (1)自动注册DefaultAnootationHandlerMapping,AnotationMethodHandlerAdapter
+        (2)提供一些列：数据绑定，数字和日期的format @NumberFormat, @DateTimeFormat, xml,json默认读写支持
+    -->
+    <mvc:annotation-driven>
+
+        <mvc:message-converters register-defaults="true">
+            <!-- 将StringHttpMessageConverter消息转换器的默认编码(ISO-8859-1)设为UTF-8 -->
+            <!-- StringHttpMessageConverter消息转换器支持text/*形式的MIME -->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <constructor-arg value="UTF-8" />
+            </bean>
+            <!-- 将Jackson2HttpMessageConverter的默认格式化输出为false -->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+
+                </property>
+                <property name="prettyPrint" value="false"/>
+                <property name="objectMapper">
+                    <!-- 可以使用自己的Mapper,通过继承ObjectMapper实现 -->
+                    <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                        <!-- Jackson默认返回日期为Long型时间戳 -->
+                        <!-- 如果个人字段需要返回其他形式的日期格式，可以在字段属性上使用@JsonFormat注解 -->
+                        <property name="dateFormat">
+                            <bean class="java.text.SimpleDateFormat">
+                                <constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+
+    <!-- 配置视图解析器解析jsp视图，默认使用jstl标签，classpath下得有jstl包-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 配置jsp文件的前缀和后缀 -->
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="order" value="1"/>
+    </bean>
+
+
+    <!-- 配置组件扫描，springmvc容器中只扫描Controller注解 -->
+    <!-- 注意：当我们进行下面的配置时，SpringMVC容器会把service、dao层的bean重新加载，从而造成新加载的bean覆盖了老的bean，但事务的AOP代理没有配置在spring-mvc.xml配置文件中，造成事务失效。
+        解决办法是：在spring-mvc.xml配置文件中的context:component-scan标签中使用use-default-filters=“false”禁用掉默认的行为。-->
+    <context:component-scan base-package="com.xnnovel.xy" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- 配置全局异常处理器只要实现了HandlerExceptionResolver接口就是全局异常处理器类，每个系统只能有一个全局异常处理器类-->
+    <!--<bean class="com.hafiz.www.exception.CustomExceptionResolver"/>-->
+
+
+    <mvc:interceptors>
+
+
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/static/**"/>
+            <mvc:exclude-mapping path="/"/>
+            <mvc:exclude-mapping path="/index.html"/>
+            <mvc:exclude-mapping path="/novel.html"/>
+            <mvc:exclude-mapping path="/novel/**"/>
+            <mvc:exclude-mapping path="/chapter/**"/>
+            <mvc:exclude-mapping path="/comment/list"/>
+            <mvc:exclude-mapping path="/login.html"/>
+            <mvc:exclude-mapping path="/register.html"/>
+            <mvc:exclude-mapping path="/signin"/>
+            <mvc:exclude-mapping path="/signup"/>
+            <mvc:exclude-mapping path="/signout"/>
+            <mvc:exclude-mapping path="/notice/**"/>
+            <mvc:exclude-mapping path="/captcha.jpg"/>
+            <mvc:exclude-mapping path="/tags.html"/>
+            <mvc:exclude-mapping path="/friendly.html"/>
+            <mvc:exclude-mapping path="/admin/login.html"/>
+            <mvc:exclude-mapping path="/admin/login"/>
+            <mvc:exclude-mapping path="/admin/logout"/>
+
+            <bean class="com.xnnovel.xy.base.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
+
+
+    </mvc:interceptors>
+
+    <!-- 配置文件上传 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置上传文件的最大尺寸为5MB -->
+        <property name="maxUploadSize">
+            <value>5242880</value>
+        </property>
+    </bean>
+
+    <!-- Kaptcha验证码生成器 -->
+    <bean name="producer" class="com.google.code.kaptcha.impl.DefaultKaptcha" scope="singleton">
+        <property name="config">
+            <bean class="com.google.code.kaptcha.util.Config">
+                <constructor-arg>
+                    <props>
+                        <prop key="kaptcha.border">no</prop>
+                        <prop key="kaptcha.textproducer.font.color">black</prop>
+                        <prop key="kaptcha.textproducer.char.space">5</prop>
+                    </props>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
+</beans>

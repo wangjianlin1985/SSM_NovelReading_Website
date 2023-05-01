@@ -1,0 +1,43 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop-3.2.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx-3.2.xsd ">
+
+    <!-- 开启事物注解
+         1.如果要想在Controller使用事物，则必须配置在spring-mvc.xml中
+         2.如果要想在Service中使用事物，则必须配置在spring.xml中。
+         其实就是spring和springmvc的上下文扫描覆盖的问题。
+     -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!-- 事务管理器对mybatis操作数据库进行事务控制，spring使用jdbc的事务控制类-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!-- dataSource在spring-dao.xml 中进行了配置 -->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!-- 定义通知 -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <!-- 传播行为 -->
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="create*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="find*" propagation="SUPPORTS"/>
+            <tx:method name="get*" propagation="SUPPORTS"/>
+            <tx:method name="select*" propagation="SUPPORTS"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 定义aop切面:execution(* com.soft.service.*.*(..))：第一个*表示方法返回子类型，第二个表示某个类，第三个表示某个方法，(..)表示入参  -->
+    <aop:config>
+        <!--<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.hafiz.www.service.impl.*.*(..))"/>-->
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.xnnovel.xy.service.impl.*.*(..))"/>
+    </aop:config>
+</beans>

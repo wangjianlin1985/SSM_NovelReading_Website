@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xnnovel.xy.dao.ProgressMapper">
+  <resultMap id="BaseResultMap" type="com.xnnovel.xy.vo.ProgressVo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="novel_id" jdbcType="INTEGER" property="novelId" />
+    <result column="chapter_id" jdbcType="INTEGER" property="chapterId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <association property="novel" select="com.xnnovel.xy.dao.NovelMapper.selectByPrimaryKey" column="novel_id"
+                 javaType="com.xnnovel.xy.entity.Novel"></association>
+    <association property="chapter" select="com.xnnovel.xy.dao.ChapterMapper.selectByPrimaryKey" column="chapter_id"
+                 javaType="com.xnnovel.xy.entity.Chapter"></association>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, novel_id, chapter_id, user_id, date_format(create_time, '%Y-%c-%d %H:%i:%s' ) as createTime, date_format(modify_time, '%Y-%c-%d %H:%i:%s' ) as modifyTime
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from xn_progress
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from xn_progress
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.xnnovel.xy.entity.Progress">
+    insert into xn_progress (id, novel_id, chapter_id, 
+      user_id, create_time, modify_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{novelId,jdbcType=INTEGER}, #{chapterId,jdbcType=INTEGER}, 
+      #{userId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.xnnovel.xy.entity.Progress">
+    insert into xn_progress
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="novelId != null">
+        novel_id,
+      </if>
+      <if test="chapterId != null">
+        chapter_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="novelId != null">
+        #{novelId,jdbcType=INTEGER},
+      </if>
+      <if test="chapterId != null">
+        #{chapterId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xnnovel.xy.entity.Progress">
+    update xn_progress
+    <set>
+      <if test="novelId != null">
+        novel_id = #{novelId,jdbcType=INTEGER},
+      </if>
+      <if test="chapterId != null">
+        chapter_id = #{chapterId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xnnovel.xy.entity.Progress">
+    update xn_progress
+    set novel_id = #{novelId,jdbcType=INTEGER},
+      chapter_id = #{chapterId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectByNovel" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from xn_progress
+    where novel_id = #{novelId,jdbcType=INTEGER}
+  </select>
+</mapper>

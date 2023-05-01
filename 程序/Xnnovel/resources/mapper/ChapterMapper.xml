@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xnnovel.xy.dao.ChapterMapper">
+  <resultMap id="BaseResultMap" type="com.xnnovel.xy.vo.ChapterVo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="novel_id" jdbcType="VARCHAR" property="novelId" />
+    <result column="chapter_words" jdbcType="INTEGER" property="chapterWords" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+    <association property="novel" select="com.xnnovel.xy.dao.NovelMapper.selectByPrimaryKey" column="novel_id"
+                 javaType="com.xnnovel.xy.entity.Novel"></association>
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.xnnovel.xy.vo.ChapterVo">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="content_text" jdbcType="LONGVARCHAR" property="contentText" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, novel_id,chapter_words,date_format(create_time, '%Y-%c-%d %H:%i:%s' ) as createTime, date_format(modify_time, '%Y-%c-%d %H:%i:%s' ) as modifyTime
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  
+   <select id="selectByChapterURL" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from xn_chapter
+    where chapterURL = #{chapterURL,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from xn_chapter
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from xn_chapter
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.xnnovel.xy.entity.Chapter">
+    insert into xn_chapter (id, title, novel_id, 
+      create_time,modify_time, content,content_text,chapter_words,chapterURL)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{novelId,jdbcType=VARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP},#{modifyTime,jdbcType=TIMESTAMP},
+      #{content,jdbcType=LONGVARCHAR},#{contentText,jdbcType=LONGVARCHAR},#{chapterWords,jdbcType=INTEGER},#{chapterURL,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.xnnovel.xy.entity.Chapter">
+    insert into xn_chapter
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="novelId != null">
+        novel_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="contentText != null">
+        content_text,
+      </if>
+      <if test="chapterWords != null">
+        chapter_words,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="novelId != null">
+        #{novelId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contentText != null">
+        #{content_text,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="chapterWords != null">
+        #{chapter_words,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.xnnovel.xy.entity.Chapter">
+    update xn_chapter
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="novelId != null">
+        novel_id = #{novelId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="contentText != null">
+        content_text = #{contentText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="chapterWords != null">
+        chapter_words = #{chapterWords,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.xnnovel.xy.entity.Chapter">
+    update xn_chapter
+    set title = #{title,jdbcType=VARCHAR},
+      novel_id = #{novelId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      content = #{content,jdbcType=LONGVARCHAR},
+      content_text = #{contentText,jdbcType=LONGVARCHAR},
+      chapter_words = #{chapterWords,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.xnnovel.xy.entity.Chapter">
+    update xn_chapter
+    set title = #{title,jdbcType=VARCHAR},
+      novel_id = #{novelId,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      chapter_words = #{chapterWords,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="queryByNovel" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select id,title from xn_chapter where novel_id=#{novelId} order by id asc
+  </select>
+
+ 
+  
+  
+  <select id="selectPrevious" resultMap="ResultMapWithBLOBs">
+    select id,title,content
+    from xn_chapter
+    where novel_id=#{novelId}
+    and <![CDATA[ id < #{id,jdbcType=INTEGER}  ]]>
+    order by id desc
+    limit 1
+  </select>
+
+  <select id="selectNext" resultMap="ResultMapWithBLOBs">
+    select id,title,content
+    from xn_chapter
+    where novel_id=#{novelId}
+    and <![CDATA[ id > #{id,jdbcType=INTEGER}  ]]>
+    order by id asc
+    limit 1
+  </select>
+
+  <select id="selectTheLatest" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from xn_chapter
+    where novel_id=#{novelId}
+    order by id desc
+    limit 1
+  </select>
+
+
+  <select id="queryList" resultMap="ResultMapWithBLOBs">
+    select a.id,a.title,a.content,a.content_text,a.chapter_words,a.novel_id,
+    date_format(a.create_time, '%Y-%c-%d %H:%i:%s' ) as createTime
+    from xn_chapter a inner JOIN xn_novel b on a.novel_id = b.id
+    <where>
+      <if test='novelId != null and novelId != ""'>
+        and a.novel_id=#{novelId}
+      </if>
+      <if test='chapterTitle != null and chapterTitle != ""'>
+        and a.title like concat('%',#{chapterTitle},'%')
+      </if>
+      <if test='novelTitle != null and novelTitle != ""'>
+        and b.title like concat('%',#{novelTitle},'%')
+      </if>
+    </where>
+    order by a.id desc
+    <if test="start != null and limit != null">
+      limit #{start}, #{limit}
+    </if>
+  </select>
+
+
+  <select id="queryTotal" resultType="java.lang.Integer">
+
+    select count(a.id) from xn_chapter a inner JOIN xn_novel b on a.novel_Id = b.id
+    <where>
+      <if test='novelId != null and novelId != ""'>
+        and a.novel_id=#{novelId}
+      </if>
+      <if test='chapterTitle != null and chapterTitle != ""'>
+        and a.title like concat('%',#{chapterTitle},'%')
+      </if>
+      <if test='novelTitle != null and novelTitle != ""'>
+        and b.title like concat('%',#{novelTitle},'%')
+      </if>
+    </where>
+  </select>
+
+
+  <delete id="banchDelete">
+    delete from xn_chapter where novel_id in
+    <foreach collection="array"  item="item" open="(" separator="," close=")"  >
+      #{item}
+    </foreach>
+  </delete>
+
+
+</mapper>
